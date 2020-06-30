@@ -527,6 +527,12 @@ class TimeLogger:
         os.chdir(image_file)
         folder_name = image_file.split('\\')[-1]
         image_name = '{}.png'.format(self.d1.replace('-', '_'))
+        left = self.master.winfo_rootx()
+        upper = self.master.winfo_rooty()
+        right = left + self.master.winfo_width()
+        lower = upper + self.master.winfo_height()
+        bb = (left, upper, right, lower)
+        # grab = ImageGrab.grab(bbox = bb) #Uncomment this out and run this.
         grab = ImageGrab.grab()
         grab.save(image_name)
         messagebox.showinfo(
