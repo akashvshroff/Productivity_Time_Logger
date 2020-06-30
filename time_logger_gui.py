@@ -14,6 +14,8 @@ from file_paths import *  # paths for the different files to use
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.backend_bases import key_press_handler
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from PIL import ImageGrab
 
 
 class TimeLogger:
@@ -50,6 +52,8 @@ class TimeLogger:
         # tkinter setup
         self.master = master
         self.master.protocol("WM_DELETE_WINDOW", self.store_info)
+        self.win_width = 650
+        self.win_height = 630
         self.master.geometry("650x630")
         self.tabs = ttk.Notebook(self.master)
         self.tab1 = ttk.Frame(self.tabs)
@@ -152,18 +156,18 @@ class TimeLogger:
         self.show_activity()
 
         # tab3
-        self.data_frame = Frame(self.tab3, width=650, height=650, bg=self.blue)
+        self.data_frame = Frame(self.tab3, width=650, height=630, bg=self.blue)
         self.data_frame.pack()
         self.data_title = Label(self.tab3, width=25, text="DATA ANALYSIS", font=(
             'System', 30, 'bold'), bg=self.blue, fg=self.white)
         self.data_title.place(relx=0, rely=0.03)
 
-        self.pie_canv = Canvas(self.tab3, width=470, height=300)
-        self.pie_canv.place(relx=0.13, rely=0.14)
+        self.canvas_chart = Canvas(self.tab3, width=450, height=300)
+        self.canvas_chart.place(relx=0.14, rely=0.13)
 
-        self.data_analysed = Text(self.tab3, width=32, height=4, font=(
+        self.data_analysed = Text(self.tab3, width=35, height=4, font=(
             'System', 18, 'bold'), bg=self.blue, fg=self.white)
-        self.data_analysed.place(relx=0.1, rely=0.66)
+        self.data_analysed.place(relx=0.06, rely=0.66)
         self.data_analysed.insert(INSERT, 'Hit analyse to see the magic ;)')
         self.data_analysed.configure(state='disabled')
 
@@ -480,26 +484,53 @@ class TimeLogger:
         day and the most logged activity.
         """
         start, end = self.time_list[0].split(':'), self.time_list[-1].split(':')
-        s = int(start[0]) if start[1] is '00' else int(start[0]) + int(start[1])/60
-        e = int(end[0]) if end[1] is '00' else int(end[0]) + int(end[1])/60
-        total_hours = '{:0>2d}:{:0>2d}'.format(int(e-s), (e-s-int(e-s)*60))
-        slots_tracked = len(self.act_data)-1 - self.act_data.count(0)
-        hours_tracked = '{:0>2d}:{:0>2d}'.format(divmod(slots_tracked*15, 60))
+        s = int(start[0]) if start[1] == '00' else int(start[0]) + int(start[1])/60
+        e = int(end[0]) if end[1] == '00' else int(end[0]) + int(end[1])/60
+        hours = int(e-s)
+        min = int((e - s - hours)*60)
+        total_hours = '{:0>2d}:{:0>2d}'.format(hours, min)
+        slots_tracked = len(self.act_data) - self.act_data.count(0)
+        h, min = divmod(slots_tracked*15, 60)
+        hours_tracked = '{:0>2d}:{:0>2d}'.format(h, min)
         labels_graph = self.activities[1:]
-        values = [self.act_data.count(i) for i in range(len(labels_graph))]
-        max_id = max(values)
-        max_act = labels_graph[values.index(id)]
-        max_tracked = '{:0>2d}:{:0>2d}'.format(divmod(max_id*15, 60))
-        analysed_text = f'You have tracked {hours_tracked} out of {total_hours} hours.\n{max_act} has been tracked the most ({max_tracked} hours).'
+        values, labels = [], []
+        for i in range(len(labels_graph)):
+            if self.act_data.count(i+1) > 0:
+                values.append(self.act_data.count(i+1))
+                labels.append(labels_graph[i])
+        # print(labels)
+        # print(values)
+        max_id = values.index(max(values))
+        max_act = labels[max_id]
+        max_h, max_m = divmod(values[max_id]*15, 60)
+        max_tracked = '{:0>2d}:{:0>2d}'.format(max_h, max_m)
+        analysed_text = f'You have tracked {hours_tracked} out of {total_hours} hours.\n{max_act} has been tracked the most\n({max_tracked} hours).'
         self.data_analysed.configure(state='normal')
         self.data_analysed.delete('1.0', END)
         self.data_analysed.insert(INSERT, analysed_text)
+        explode = tuple([0.1 if i == max_id else 0 for i in range(len(labels))])
+        figure1 = Figure(figsize=(4.5, 3), dpi=100)
+        subplot1 = figure1.add_subplot(111)
+        subplot1.pie(values, explode=explode, labels=labels,
+                     autopct='%1.1f%%', shadow=True, startangle=90)
+        subplot1.axis('equal')
+        pie1 = FigureCanvasTkAgg(figure1, self.tab3)
+        pie1.get_tk_widget().place(relx=0.14, rely=0.13)
+        pie1.draw()
+        toolbar = NavigationToolbar2Tk(pie1, self.tab3)
+        toolbar.place(relx=0.14, rely=0.6)
 
     def save_data(self):
         """
         Save the data that is analysed.
         """
-        pass
+        os.chdir(image_file)
+        folder_name = image_file.split('\\')[-1]
+        image_name = '{}.png'.format(self.d1.replace('-', '_'))
+        grab = ImageGrab.grab()
+        grab.save(image_name)
+        messagebox.showinfo(
+            "Saved", "Your report has been saved as an image in the folder {}!".format(folder_name))
 
 
 def main():
