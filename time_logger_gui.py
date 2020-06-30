@@ -10,6 +10,7 @@ from datetime import date, timedelta
 import os
 import sys
 import shelve
+from file_paths import *  # paths for the different files to use
 
 
 class TimeLogger:
@@ -20,8 +21,8 @@ class TimeLogger:
         """
 
         # path must be same as the initialise logger
-        self.file_path = r'C:\Users\akush\Desktop\Programming\Projects\Time_Logger\log_data.xlsx'
-        self.shelve_file = r'C:\Users\akush\Desktop\Programming\Projects\Time_Logger\Log_Data\My_Data'
+        self.file_path = log_file  # in file_paths program
+        self.shelve_file = shelve_path
         self.date_today = date.today()
         self.d1 = self.date_today.strftime("%d-%m-%Y")
         self.time_list, self.activities, self.act_data, self.added_sheet, self.merged_cells, self.colours = [], [], [], [], [], []

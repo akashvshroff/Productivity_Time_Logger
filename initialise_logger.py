@@ -2,6 +2,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Border, Side, Alignment, colors, PatternFill, Font, Fill
 import shelve
 from datetime import date
+from file_paths import *  # paths for the different files to use
 
 
 def stylise_cells(ws, cell_range, allign_style='center'):
@@ -42,7 +43,7 @@ def initialise_sheet(times):
     Add times to a column in the sheet
     """
     # Enter your destination file - i.e where the excel file is to be saved.
-    dest_file = r'C:\Users\akush\Desktop\Programming\Projects\Time_Logger\log_data.xlsx'
+    dest_file = log_file
     wb = Workbook()
     sheet = wb.active
     stylise_cells(sheet, 'B2:B70')
@@ -75,7 +76,7 @@ def shelve_data(times):
     data['merged_cells'] = merged
     data['colours'] = colours_list
     data['time_list'] = times
-    shelve_file = r'C:\Users\akush\Desktop\Programming\Projects\Time_Logger\Log_Data\My_Data'
+    shelve_file = shelve_path
     with shelve.open(shelve_file) as fhand:
         fhand['data'] = data
 
