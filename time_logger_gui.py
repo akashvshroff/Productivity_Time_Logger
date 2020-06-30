@@ -11,6 +11,9 @@ import os
 import sys
 import shelve
 from file_paths import *  # paths for the different files to use
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backend_bases import key_press_handler
+import matplotlib.pyplot as plt
 
 
 class TimeLogger:
@@ -149,6 +152,30 @@ class TimeLogger:
         self.show_activity()
 
         # tab3
+        self.data_frame = Frame(self.tab3, width=650, height=650, bg=self.blue)
+        self.data_frame.pack()
+        self.data_title = Label(self.tab3, width=25, text="DATA ANALYSIS", font=(
+            'System', 30, 'bold'), bg=self.blue, fg=self.white)
+        self.data_title.place(relx=0, rely=0.03)
+
+        self.pie_canv = Canvas(self.tab3, width=470, height=300)
+        self.pie_canv.place(relx=0.13, rely=0.14)
+
+        self.data_analysed = Text(self.tab3, width=32, height=4, font=(
+            'System', 18, 'bold'), bg=self.blue, fg=self.white)
+        self.data_analysed.place(relx=0.1, rely=0.66)
+        self.data_analysed.insert(INSERT, 'Hit analyse to see the magic ;)')
+        self.data_analysed.configure(state='disabled')
+
+        self.show_analysis = Button(self.tab3, text='ANALYSE', width=11, command=self.anaylyse_data,
+                                    fg=self.white, bg=self.red, font=('System', 18, 'bold'))
+        self.save_analysis = Button(self.tab3, text='SAVE',  width=11, command=self.save_data,
+                                    fg=self.white, bg=self.red, font=('System', 18, 'bold'))
+        self.end_prg = Button(self.tab3, text='QUIT',  width=11, command=self.store_info,
+                              fg=self.white, bg=self.red, font=('System', 18, 'bold'))
+        self.show_analysis.place(relx=0.03, rely=0.89)
+        self.save_analysis.place(relx=0.35, rely=0.89)
+        self.end_prg.place(relx=0.67, rely=0.89)
 
     def change_tab(self, n):
         """
@@ -422,6 +449,7 @@ class TimeLogger:
                 if not i:
                     continue
                 str_to_show += "{:0>2d}. {}\n".format(i, act)
+        self.data_text.delete('1.0', END)
         self.data_text.insert(INSERT, str_to_show)
         self.data_text.configure(state='disabled')
 
@@ -450,6 +478,26 @@ class TimeLogger:
         """
         Call upon matplotlib. generate the pie - also add the time logged for the
         day and the most logged activity.
+        """
+        start, end = self.time_list[0].split(':'), self.time_list[-1].split(':')
+        s = int(start[0]) if start[1] is '00' else int(start[0]) + int(start[1])/60
+        e = int(end[0]) if end[1] is '00' else int(end[0]) + int(end[1])/60
+        total_hours = '{:0>2d}:{:0>2d}'.format(int(e-s), (e-s-int(e-s)*60))
+        slots_tracked = len(self.act_data)-1 - self.act_data.count(0)
+        hours_tracked = '{:0>2d}:{:0>2d}'.format(divmod(slots_tracked*15, 60))
+        labels_graph = self.activities[1:]
+        values = [self.act_data.count(i) for i in range(len(labels_graph))]
+        max_id = max(values)
+        max_act = labels_graph[values.index(id)]
+        max_tracked = '{:0>2d}:{:0>2d}'.format(divmod(max_id*15, 60))
+        analysed_text = f'You have tracked {hours_tracked} out of {total_hours} hours.\n{max_act} has been tracked the most ({max_tracked} hours).'
+        self.data_analysed.configure(state='normal')
+        self.data_analysed.delete('1.0', END)
+        self.data_analysed.insert(INSERT, analysed_text)
+
+    def save_data(self):
+        """
+        Save the data that is analysed.
         """
         pass
 

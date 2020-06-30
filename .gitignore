@@ -1,4 +1,4 @@
 Log_Data/
-pycache/
+__pycache__/
 file_paths.py
 log_data.xlsx
