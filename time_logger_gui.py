@@ -23,8 +23,7 @@ class TimeLogger:
         Initialise all the files - path, date.
         Set up the Tk windows and buttons etc
         """
-
-        # path must be same as the initialise logger
+        # path must be same as the initialise_logger
         self.file_path = log_file  # in file_paths program
         self.shelve_file = shelve_path
         self.date_today = date.today()
