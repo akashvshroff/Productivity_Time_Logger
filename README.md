@@ -31,7 +31,7 @@
 
 - This page allows users to enter data that is logged by choosing their activity, entering a start and end time - both in military format. In case of a conflict with data, there is a popup that emerges and informs the user. If the users enter a time for an activity that spans more than one cell, the relevant cells are merged. All activities are coloured with a distinct colour in the colour_list.
 - In a conflict, all cells are unmerged, the cells are reformatted and the added_sheet is reinitialised with all False values so the act_data can be re-entered with the new correct values.
-- Here is an image of the log sheet after some activities have been inputted:
+- Here is an image of the log sheet after some activities have been inputted, when the day changes, the column where the activities are logged moves one to the right. Here, 1st July lies on column C and therefore the data for 2nd July would be displayed on column D, while preserving the logged data for 1st July, thereby allowing side-by-side comparison across days:
 
     ![alt text](https://github.com/akashvshroff/Productivity_Time_Logger/blob/master/Run_Time_Snapshots/Sheet_w_Data.png)
 
