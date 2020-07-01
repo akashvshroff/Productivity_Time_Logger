@@ -12,7 +12,7 @@
 - First, while looking at the inner workings of the program, it is necessary to also visualise the final product, and see the program as it runs, hence I have included several snapshots of runtime in a folder in this repository.
 - In this build, the initialise_logger program is meant to be run first and only needs to be run once, this sets up the excel sheet and enters the times into it, formatting it etc. This is what the sheet would then look like:
 
-    ![alt text]()
+    ![alt text](https://github.com/akashvshroff/Productivity_Time_Logger/blob/master/Run_Time_Snapshots/Initialised_Sheet.png)
 
 - In this program, the start and end times can be altered, and for each time - the cell adjacent to it represents the time spent on a task from that time to that time + 15 minutes, upper bound not inclusive. For example, if cell B3 is 07:00 and cell C3 reads 'Programming' that means that the activity 'Programming' spanned from 07:00 to 07:15 (not including 07:15).
 - This program also initialises certain key data structures that are integral to this program and shelves them for later use. I will go into further detail about the choice of my data structures shortly.
@@ -27,22 +27,22 @@
     - colours = a list of colours to use for each activity.
 - Here is the an image of the GUI main page:
 
-    ![alt text]()
+    ![alt text](https://github.com/akashvshroff/Productivity_Time_Logger/blob/master/Run_Time_Snapshots/GUI_Log_Page.png)
 
 - This page allows users to enter data that is logged by choosing their activity, entering a start and end time - both in military format. In case of a conflict with data, there is a popup that emerges and informs the user. If the users enter a time for an activity that spans more than one cell, the relevant cells are merged. All activities are coloured with a distinct colour in the colour_list.
 - In a conflict, all cells are unmerged, the cells are reformatted and the added_sheet is reinitialised with all False values so the act_data can be re-entered with the new correct values.
 - Here is an image of the log sheet after some activities have been inputted:
 
-    ![alt text]()
+    ![alt text](https://github.com/akashvshroff/Productivity_Time_Logger/blob/master/Run_Time_Snapshots/Sheet_w_Data.png)
 
 - The second page of the GUI allows users to edit the activities, giving them the option to add or delete any, and in case of deletion, all logs for that activity are removed and the activity is popped from the activities list. Therefore all index positions higher than it must be reduced in the act_data list as the size of the activities list has reduced. The value in the activities list must be popped and not simply made None to avoid the activities list outgrowing the colours list while actual activities may remain less than 12.
 - Here is an image of the second page/tab of the GUI:
 
-    ![alt text]()
+    ![alt text](https://github.com/akashvshroff/Productivity_Time_Logger/blob/master/Run_Time_Snapshots/GUI_Edit_Activities.png)
 
 - The third page of the GUI uses matplotlib to construct a pie chart for all the activities have been logged as well as displaying some other information, such as number of hours logged, activity that has been logged maximum etc. It also allows users to save the analytics report through the module pillow which grabs the entire tkinter window and saves it as a png file, with a result as displayed below:
 
-    ![alt text]()
+    ![alt text](https://github.com/akashvshroff/Productivity_Time_Logger/blob/master/Run_Time_Snapshots/GUI_Analysis.png)
 
 # P.S:
 
