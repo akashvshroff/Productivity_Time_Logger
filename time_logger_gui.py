@@ -23,7 +23,7 @@ class TimeLogger:
         Initialise all the files - path, date.
         Set up the Tk windows and buttons etc
         """
-        # path must be same as the initialise_logger
+        # path must be same as the initialise logger
         self.file_path = log_file  # in file_paths program
         self.shelve_file = shelve_path
         self.date_today = date.today()
@@ -466,7 +466,7 @@ class TimeLogger:
                 self.button_texts[i].set(acts[i])
                 self.buttons[i]['state'] = NORMAL
             else:
-                self.button_texts[i].set('')
+                self.button_texts[i].set('(Add activity)')
                 self.buttons[i]['state'] = DISABLED
 
     def reinitialies_values(self):
@@ -506,6 +506,7 @@ class TimeLogger:
         self.data_analysed.configure(state='normal')
         self.data_analysed.delete('1.0', END)
         self.data_analysed.insert(INSERT, analysed_text)
+        self.data_analysed.configure(state='disabled')
         explode = tuple([0.1 if i == max_id else 0 for i in range(len(labels))])
         figure1 = Figure(figsize=(4.5, 3), dpi=100)
         subplot1 = figure1.add_subplot(111)
