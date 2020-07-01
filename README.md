@@ -46,5 +46,6 @@
 
 # P.S:
 
+- The program initialise_logger is to be run once and before any other program! 
 - The file_paths program is imported by the other programs and is used to make changing of the paths for storage a lot easier, and therefore if anyone wants to use this build, they simply have to create a file path program and add in their own paths for the shelved_data, log_sheet (the excel sheet) and the image_file (the analytics report saved by pillow).
 - While it is possible to view the excel file as the image runs, it is currently not possible to edit it while you view it owing to permission errors and the openpyxl module - therefore the log any information or delete an activity, please make sure the excel file is not open!
