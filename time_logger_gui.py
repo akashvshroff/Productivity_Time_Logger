@@ -27,6 +27,7 @@ class TimeLogger:
         self.file_path = log_file  # in file_paths program
         self.shelve_file = shelve_path
         self.date_today = date.today()
+        #self.date_today = date.today() + timedelta(days=1)
         self.d1 = self.date_today.strftime("%d-%m-%Y")
         self.time_list, self.activities, self.act_data, self.added_sheet, self.merged_cells, self.colours = [], [], [], [], [], []
         self.start_row = 2
