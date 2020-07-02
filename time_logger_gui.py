@@ -15,7 +15,6 @@ from matplotlib.backend_bases import key_press_handler
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from PIL import ImageGrab
-import schedule
 
 
 class TimeLogger:
@@ -28,11 +27,7 @@ class TimeLogger:
         self.file_path = log_file  # in file_paths program
         self.shelve_file = shelve_path
         self.date_today = date.today()
-        self.time_now = datetime.now()
-        self.end = datetime.combine(self.time_now, time.max)
-        # debugging purposes
-        #self.end = self.time_now + timedelta(seconds=30)
-        #self.date_today = date.today() + timedelta(days=1)
+
         self.d1 = self.date_today.strftime("%d-%m-%Y")
         self.time_list, self.activities, self.act_data, self.added_sheet, self.merged_cells, self.colours = [], [], [], [], [], []
         self.start_row = 2
@@ -184,17 +179,6 @@ class TimeLogger:
         self.show_analysis.place(relx=0.03, rely=0.89)
         self.save_analysis.place(relx=0.35, rely=0.89)
         self.end_prg.place(relx=0.67, rely=0.89)
-
-        self.master.after(0, self.save_report)
-
-    def save_report(self):
-        self.time = datetime.now()
-        if self.time >= self.end:
-            self.change_tab(2)
-            self.analyse_data()
-            self.save_data(1)
-            self.store_info()
-        self.master.after(2000, self.save_report)
 
     def change_tab(self, n):
         """
@@ -374,7 +358,7 @@ class TimeLogger:
         self.added_sheet = [False for _ in range(len(self.time_list))]
         curr_row = self.start_row + 1
         curr_cell = '{}{}'.format(self.st_column, curr_row)
-        for i in range(len(self.time_list)):
+        for i in range(len(self.time_list)-1):
             cell = ws[curr_cell]
             cell.value = ''
             cell.border = self.border
