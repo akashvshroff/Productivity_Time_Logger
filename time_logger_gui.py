@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, Alignment, colors, PatternFill, Font, Fill
 from openpyxl.styles.colors import Color
 from openpyxl.utils import get_column_letter
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime, time
 import os
 import sys
 import shelve
@@ -15,6 +15,7 @@ from matplotlib.backend_bases import key_press_handler
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from PIL import ImageGrab
+import schedule
 
 
 class TimeLogger:
@@ -27,6 +28,10 @@ class TimeLogger:
         self.file_path = log_file  # in file_paths program
         self.shelve_file = shelve_path
         self.date_today = date.today()
+        self.time_now = datetime.now()
+        self.end = datetime.combine(self.time_now, time.max)
+        # debugging purposes
+        #self.end = self.time_now + timedelta(seconds=30)
         #self.date_today = date.today() + timedelta(days=1)
         self.d1 = self.date_today.strftime("%d-%m-%Y")
         self.time_list, self.activities, self.act_data, self.added_sheet, self.merged_cells, self.colours = [], [], [], [], [], []
@@ -170,15 +175,26 @@ class TimeLogger:
         self.data_analysed.insert(INSERT, 'Hit analyse to see the magic ;)')
         self.data_analysed.configure(state='disabled')
 
-        self.show_analysis = Button(self.tab3, text='ANALYSE', width=11, command=self.anaylyse_data,
+        self.show_analysis = Button(self.tab3, text='ANALYSE', width=11, command=self.analyse_data,
                                     fg=self.white, bg=self.red, font=('System', 18, 'bold'))
-        self.save_analysis = Button(self.tab3, text='SAVE',  width=11, command=self.save_data,
+        self.save_analysis = Button(self.tab3, text='SAVE',  width=11, command=lambda: self.save_data(0),
                                     fg=self.white, bg=self.red, font=('System', 18, 'bold'))
         self.end_prg = Button(self.tab3, text='QUIT',  width=11, command=self.store_info,
                               fg=self.white, bg=self.red, font=('System', 18, 'bold'))
         self.show_analysis.place(relx=0.03, rely=0.89)
         self.save_analysis.place(relx=0.35, rely=0.89)
         self.end_prg.place(relx=0.67, rely=0.89)
+
+        self.master.after(0, self.save_report)
+
+    def save_report(self):
+        self.time = datetime.now()
+        if self.time >= self.end:
+            self.change_tab(2)
+            self.analyse_data()
+            self.save_data(1)
+            self.store_info()
+        self.master.after(2000, self.save_report)
 
     def change_tab(self, n):
         """
@@ -477,7 +493,7 @@ class TimeLogger:
         self.add_act.set("Add activity.")
         self.del_act.set("Delete activity.")
 
-    def anaylyse_data(self):
+    def analyse_data(self):
         """
         Call upon matplotlib. generate the pie - also add the time logged for the
         day and the most logged activity.
@@ -520,7 +536,7 @@ class TimeLogger:
         toolbar = NavigationToolbar2Tk(pie1, self.tab3)
         toolbar.place(relx=0.14, rely=0.6)
 
-    def save_data(self):
+    def save_data(self, n):
         """
         Save the data that is analysed.
         """
@@ -535,8 +551,9 @@ class TimeLogger:
         # grab = ImageGrab.grab(bbox = bb) #Uncomment this out and run this.
         grab = ImageGrab.grab()
         grab.save(image_name)
-        messagebox.showinfo(
-            "Saved", "Your report has been saved as an image in the folder {}!".format(folder_name))
+        if not n:
+            messagebox.showinfo(
+                "Saved", "Your report has been saved as an image in the folder {}!".format(folder_name))
 
 
 def main():
