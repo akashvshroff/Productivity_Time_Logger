@@ -296,7 +296,7 @@ class TimeLogger:
         if not start_index < end_index:
             return False, None
         for i in range(start_index, end_index):
-            if self.act_data[i] not in [0, ch]:
+            if self.act_data[i] != 0:
                 return True, True
         return True, False  # no conflict
 
